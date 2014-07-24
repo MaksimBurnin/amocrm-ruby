@@ -1,7 +1,20 @@
 = Amocrm
 
 Ruby interface for AmoCRM API
+
 Amocrm documentation is located here: https://developers.amocrm.ru/introduction.php
+
+== Using
+
+First thing you need to do is sign into your organization's account
+with your USER_LOGIN and USER_HASH.
+
+  require 'amocrm'
+  amocrm = new Amocrm::API.new 'organization'
+  amocrm.auth 'login','hash'
+
+Now you can start doing useful stuff
+
 
 == Testing
 
@@ -9,6 +22,37 @@ Amocrm documentation is located here: https://developers.amocrm.ru/introduction.
   nano spec/config.yml
   rake test
 
+== Contrebuting
+
+* Create an issue
+
+~ or ~
+
+* Fork
+* Create a branch for your edits
+* Write tests if neccessary
+* Test
+* Pull request
+
 == License
 
-See MIT-LICENSE in project directory
+Copyright 2014 Maksim Burnin
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
