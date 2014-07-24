@@ -1,7 +1,8 @@
 module Amocrm
   class API
-    API_DOMAIN = "%{subdomain}.amocrm.ru"
-    API_PATH   = "/private/api/%{method}.php?type=json"
+    API_DOMAIN        = "%{subdomain}.amocrm.ru"
+    API_AUTH_PATH     = "/private/api/auth.php?type=json"
+    API_METHOD_PATH   = "/private/api/v2/json/%{method}"
 
     HTTP_CODES =  {
       301 => Error,
@@ -20,18 +21,35 @@ module Amocrm
       @http   = nil
     end
 
-    def request method, data = {}
+    def auth username, userhash
+      data = {'USER_LOGIN' => username, 'USER_HASH' => userhash, 'type'=> 'json'}
+      data = URI.encode_www_form(data)
+      path = API_AUTH_PATH
+
+      response = request path, data, 'application/x-www-form-urlencoded'
+
+      response['auth']
+    end
+
+    def exec method, data = {}
+      path = API_METHOD_PATH % {method: method}
+      data = JSON.generate(data)
+      request path, data, 'application/json'
+    end
+
+    private
+
+    def connection
+      @http ||= Net::HTTP.new(API_DOMAIN % @options, 443)
+      @http.use_ssl = true
+    end
+
+    def request path, data, content_type
       connection
 
-      header = headers
-      if data.kind_of? Hash
-        header['Content-Type'] = 'application/json'
-        data = JSON.generate(data)
-      else
-        header['Content-Type'] ='application/x-www-form-urlencoded'
-      end
+      response = @http.post path, data, headers.merge({'Content-Type'=>content_type})
+      @cookie = response.to_hash['set-cookie']
 
-      response = @http.post path(method), data, header
       code = response.code.to_i
       msg  = response.message
 
@@ -39,8 +57,6 @@ module Amocrm
         raise HTTP_CODES[code].new(msg) if HTTP_CODES.keys.include? code
         raise Error.new "Server respond with #{code.to_s}"
       end
-
-      @cookie = response.to_hash['set-cookie']
 
       begin
         result = JSON.parse(response.body)['response']
@@ -53,12 +69,6 @@ module Amocrm
       result
     end
 
-    private
-    def connection
-      @http ||= Net::HTTP.new(API_DOMAIN % @options, 443)
-      @http.use_ssl = true
-    end
-
     def headers
       {
         'Cookie'           => @cookie.join,
@@ -69,7 +79,8 @@ module Amocrm
     end
 
     def path method
-      API_PATH % {method: method}
+
     end
+
   end
 end

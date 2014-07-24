@@ -5,8 +5,11 @@ describe Amocrm::API do
     api = Amocrm::API.new 'example'
     expect(api).to be_a(Amocrm::API)
   end
-  it "should raise error" do
+
+  it "should login" do
     api = Amocrm::API.new 'rubygem'
-    expect {api.request 'non-existant-method'}.to raise_error(Amocrm::MethodNotFound)
+    expect(api.auth(CONFIG['login'],CONFIG['hash'])).to be true
+    expect {api.exec 'non-existant-method'}.to raise_error(Amocrm::MalformedRequest)
   end
+
 end
