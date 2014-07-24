@@ -1,4 +1,5 @@
 module Amocrm::Resources
-  class Contact < Base
+  class Note < Base
+
   end
 end

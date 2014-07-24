@@ -1,4 +1,5 @@
 module Amocrm::Resources
-  class Contact < Base
+  class Tag < Base
+
   end
 end
