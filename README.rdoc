@@ -1,0 +1,14 @@
+= Amocrm
+
+Ruby interface for AmoCRM API
+Amocrm documentation is located here: https://developers.amocrm.ru/introduction.php
+
+== Testing
+
+  cp spec/config.example.yml spec/config.yml
+  nano spec/config.yml
+  rake test
+
+== License
+
+See MIT-LICENSE in project directory
