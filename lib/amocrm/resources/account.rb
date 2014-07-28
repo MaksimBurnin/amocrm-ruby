@@ -1,5 +1,5 @@
-module Amocrm::Resources
-  class Account < Base
+module Amocrm
+  class Account < BaseResource
 
   end
 end

@@ -1,11 +1,20 @@
-module Amocrm::Resources
-  class Base
+module Amocrm
+  class BaseResource
     @@attributes = {}
 
     def initialize
-      @new_record = true
-      @api        = nil
-      @values = {}
+      @new_record   = true
+      @synchrinized = false
+      @api          = nil
+      @values       = {}
+    end
+
+    def new_record?
+      @new_record
+    end
+
+    def synchrinized?
+      @synchrinized
     end
 
     def find id
@@ -18,11 +27,11 @@ module Amocrm::Resources
     def sync api
     end
 
-    def to_hash
+    def for_json
       result = (@@attributes.map do |key,attr|
         value = @values[key]
-        if value.respond_to? :to_hash
-          value = value.to_hash
+        if value.respond_to? :for_json
+          value = value.for_json
         end
         [key,value]
       end)

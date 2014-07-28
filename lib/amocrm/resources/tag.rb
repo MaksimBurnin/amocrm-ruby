@@ -1,5 +1,5 @@
-module Amocrm::Resources
-  class Tag < Base
+module Amocrm
+  class Tag < BaseResource
 
   end
 end

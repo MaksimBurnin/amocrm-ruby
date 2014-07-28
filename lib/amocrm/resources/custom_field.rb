@@ -1,5 +1,5 @@
-module Amocrm::Resources
-  class CustomField < Base
+module Amocrm
+  class CustomField < BaseResource
 
   end
 end

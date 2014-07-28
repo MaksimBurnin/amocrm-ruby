@@ -1,5 +1,5 @@
-module Amocrm::Resources
-  class Note < Base
+module Amocrm
+  class Note < BaseResource
 
   end
 end

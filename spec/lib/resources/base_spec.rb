@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe Amocrm::Resources::Base do
+describe Amocrm::BaseResource do
 
-  class TestResource < Amocrm::Resources::Base
+  class TestResource < Amocrm::BaseResource
     create_attribute :int, Integer, 100
   end
 
@@ -20,7 +20,7 @@ describe Amocrm::Resources::Base do
   it "should create encode to json" do
     resource = TestResource.new
     resource.int = 123
-    json = JSON.generate(resource.to_hash)
+    json = JSON.generate(resource.for_json)
     hash = JSON.parse(json)
     expect(hash['int']).to eq 123
   end
