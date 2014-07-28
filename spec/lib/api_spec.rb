@@ -7,7 +7,7 @@ describe Amocrm::API do
   end
 
   it "should login" do
-    api = Amocrm::API.new 'rubygem'
+    api = Amocrm::API.new CONFIG['subdomain']
     expect(api.auth(CONFIG['login'],CONFIG['hash'])).to be true
     expect {api.exec 'non-existant-method'}.to raise_error(Amocrm::MalformedRequest)
   end
