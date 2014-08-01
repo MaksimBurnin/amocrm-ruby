@@ -31,6 +31,21 @@ module Amocrm
       response['auth']
     end
 
+    def save collection
+      raise ArgumentError.new "Collection expected, got #{collection.class}" unless collection.kind_of? BaseCollection
+
+      method   = collection.set_method
+      json_key = collection.json_key
+      data     = collection.for_json
+
+      result = exec method, data
+      result[json_key]['add'].each do |item|
+        collection[item['request_id']].id=item['id']
+      end
+
+      true
+    end
+
     def exec method, data = {}
       path = API_METHOD_PATH % {method: method}
       data = JSON.generate(data)

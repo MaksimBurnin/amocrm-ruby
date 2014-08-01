@@ -4,7 +4,7 @@ module Amocrm
 
     def initialize
       @new_record   = true
-      @synchrinized = false
+      @synchronized = false
       @api          = nil
       @values       = {}
     end
@@ -13,18 +13,11 @@ module Amocrm
       @new_record
     end
 
-    def synchrinized?
-      @synchrinized
-    end
-
     def find id
       result = @api.send(api_list_method,{id:id})
       if result
         #result[api_]
       end
-    end
-
-    def sync api
     end
 
     def for_json
@@ -70,6 +63,7 @@ module Amocrm
         raise ArgumentError.new "#{name} value should have type #{attr[:kind]}, got #{value.class}" 
       end
       @values[name.to_sym] = value
+      @synchronized = false
     end
   end
 end

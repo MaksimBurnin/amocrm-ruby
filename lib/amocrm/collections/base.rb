@@ -1,50 +1,56 @@
 module Amocrm
-  class BaseCollection < Array
-    @@api_obj=nil
+  class BaseCollection
+    include Enumerable
 
-    def initialize api_obj=nil
-      @api_obj = api_obj if api_obj
-      @api_obj ||= @@api_obj
-      raise Amocrm::Error.new "No API connection estabilished" unless @api_obj
+    @@req_id  = 1
+    @@api_obj = nil
+
+    def initialize
+      @resources = []
     end
 
-    def []= value
+    def []= index, value
       check value
-      super
+      req_id = (@@req_id += 1)
+
+      value.request_id = req_id
+      @resources[req_id] = value
     end
 
     def << value
       check value
-      super
+      value.request_id = (@@req_id += 1)
+      @resources << value
     end
 
-    def store
-      api.exec set_method, for_json
-      
+    def [] index
+      @resources[index]
     end
 
-    def get
+    def each &block
+      @resources.each(&block)
     end
 
     def self.record_class
       throw "record_class should be implemented in a subclass"
     end
 
-    protected
-
-    def api
-      @api_obj
+    def request_item request_id
+      detect{|i|i.request_id = request_id}
     end
 
     def for_json
-      for_update = (reject {|res| res.new_record?}).map{|res|res.for_json}
-      for_add    = (select {|res| res.new_record?}).map{|res|res.for_json}
+      items      = @resources
+      for_update = (items.reject{|res| res.new_record?}).map{|res|res.for_json}
+      for_add    = (items.select{|res| res.new_record?}).map{|res|res.for_json}
 
       data = {update: for_update, add: for_add}
       request = {request:{}}
       request[:request][json_key]=data
       request
     end
+
+    protected
 
     def check value
       klass = self.class.record_class

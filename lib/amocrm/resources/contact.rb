@@ -19,6 +19,8 @@ module Amocrm
     # custom_fields//values//last_modified  Дата последнего изменения (передается в формате timestamp)
     # server_time   временная метка текущего серверного времени со смещением на часовой пояс аккаунта(передается в формате timestamp)
 
+    create_attribute :id,              Integer
+    create_attribute :request_id,      Integer
     create_attribute :name,            String
     create_attribute :company_name,    String
     create_attribute :type,            String

@@ -3,6 +3,7 @@ require 'spec_helper'
 describe Amocrm::Contact do
   it "Should have attributes according to API description" do
     resource = Amocrm::Contact.new
+    expect(resource).to respond_to(:name)
     expect(resource).to respond_to(:company_name)
     expect(resource).to respond_to(:type)
     expect(resource).to respond_to(:server_time)
@@ -17,4 +18,5 @@ describe Amocrm::Contact do
     resource.company_name = "Google"
     expect(resource.for_json[:company_name]).to eq 'Google'
   end
+
 end
