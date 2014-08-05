@@ -10,7 +10,7 @@ First thing you need to do is sign into your organization's account
 with your USER_LOGIN and USER_HASH.
 
   require 'amocrm'
-  amocrm = new Amocrm::API.new 'organization'
+  amocrm = Amocrm::API.new 'organization'
   amocrm.auth 'login','hash'
 
 Now you can start doing useful stuff
