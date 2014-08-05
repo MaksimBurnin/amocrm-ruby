@@ -11,3 +11,4 @@ require 'amocrm/collections/base'
 require 'amocrm/collections'
 require 'amocrm/resources'
 
+require 'amocrm/version'
