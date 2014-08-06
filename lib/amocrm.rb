@@ -1,5 +1,7 @@
 module Amocrm
 end
+
+require 'date'
 require 'json'
 
 require 'amocrm/exceptions'
