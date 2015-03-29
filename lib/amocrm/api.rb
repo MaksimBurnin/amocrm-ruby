@@ -1,6 +1,5 @@
 require 'uri'
 require 'net/http'
-require 'pry'
 
 module Amocrm
   class API
