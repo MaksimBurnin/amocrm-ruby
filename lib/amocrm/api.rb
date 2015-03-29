@@ -1,8 +1,12 @@
+require 'uri'
+require 'net/http'
+require 'pry'
+
 module Amocrm
   class API
     API_DOMAIN        = "%{subdomain}.amocrm.ru"
     API_AUTH_PATH     = "/private/api/auth.php?type=json"
-    API_METHOD_PATH   = "/private/api/v2/json/%{method}"
+    API_METHOD_PATH   = "/private/api/v2/json/%{action}"
 
     HTTP_CODES =  {
       301 => Error,
@@ -15,30 +19,30 @@ module Amocrm
       503 => ServerError
     }
 
-    def initialize subdomain
+    def initialize(subdomain)
       @options = { subdomain: subdomain }
       @cookie = []
-      @http   = nil
+      @connection = nil
     end
 
-    def auth username, userhash
-      data = {'USER_LOGIN' => username, 'USER_HASH' => userhash, 'type'=> 'json'}
+    def auth(username, userhash)
+      data = { USER_LOGIN: username, USER_HASH: userhash }
       data = URI.encode_www_form(data)
       path = API_AUTH_PATH
 
-      response = request path, data, 'application/x-www-form-urlencoded'
+      response = request :post, path, data, 'application/x-www-form-urlencoded'
 
       response['auth']
     end
 
-    def save collection
+    def save(collection)
       raise ArgumentError.new "Collection expected, got #{collection.class}" unless collection.kind_of? BaseCollection
 
       method   = collection.set_method
       json_key = collection.json_key
       data     = collection.for_json
 
-      result = exec method, data
+      result = exec :post, method, data
       result[json_key]['add'].each do |item|
         collection[item['request_id']].id=item['id']
       end
@@ -46,24 +50,30 @@ module Amocrm
       true
     end
 
-    def exec method, data = {}
-      path = API_METHOD_PATH % {method: method}
+    def exec(method, action, data = {})
+      path = API_METHOD_PATH % { action: action }
       data = JSON.generate(data)
-      request path, data, 'application/json'
+      request method, path, data
     end
 
     private
 
     def connection
-      @http ||= Net::HTTP.new(API_DOMAIN % @options, 443)
-      @http.use_ssl = true
+      return @connection if @connection
+      @connection = Net::HTTP.new(API_DOMAIN % @options, 443)
+      @connection.use_ssl = true
+      @connection
     end
 
-    def request path, data, content_type
-      connection
+    def request(method, path, data, content_type = nil)
+      headers = default_headers
+      headers['Content-Type'] = content_type if content_type
 
-      response = @http.post path, data, headers.merge({'Content-Type'=>content_type})
-      @cookie = response.to_hash['set-cookie']
+      response = case method.to_sym
+                   when :put, :post  then connection.send(method.to_sym, path, data, headers)
+                   when :delete, :get then connection.send(method.to_sym, path, headers)
+                 end
+      @cookie = response.to_hash['set-cookie'] if @cookie.empty?
 
       code = response.code.to_i
       msg  = response.message
@@ -76,7 +86,7 @@ module Amocrm
       begin
         result = JSON.parse(response.body)['response']
       rescue
-        raise MalformedResponse.new "Responce is not a valid JSON"
+        raise MalformedResponse.new 'Response is not a valid JSON'
       end
 
       raise GenericError.new(response['error']) if response['error']
@@ -84,17 +94,11 @@ module Amocrm
       result
     end
 
-    def headers
+    def default_headers
       {
         'Cookie'           => @cookie.join,
-        #'Content-Type'     => 'application/json',
-        'User-Agent'       => 'amocrm-gem-ruby/'+VERSION,
-        'X-Human-Greeting' => 'Preved Medved'
+        'Content-Type'     => 'application/json'
       }
-    end
-
-    def path method
-
     end
 
   end

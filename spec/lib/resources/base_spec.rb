@@ -6,7 +6,7 @@ describe Amocrm::BaseResource do
     create_attribute :int, Integer, 100
   end
 
-  it "should create attributes" do
+  it 'should create attributes' do
     resource = TestResource.new
 
     expect(resource.int).to eq(100)
@@ -14,10 +14,10 @@ describe Amocrm::BaseResource do
     resource.int = 0
     expect(resource.int).to eq(0)
 
-    expect{resource.int = "test"}.to raise_error
+    expect{resource.int = 'test'}.to raise_error
   end
 
-  it "should create encode to json" do
+  it 'should create encode to json' do
     resource = TestResource.new
     resource.int = 123
     json = JSON.generate(resource.for_json)

@@ -1,14 +1,14 @@
 require 'spec_helper'
 
 describe Amocrm::Contacts do
-  it "Should reject values of different types" do
+  it 'Should reject values of different types' do
     list = Amocrm::Contacts.new
-    expect{list << "Some Value"}.to raise_error ArgumentError
+    expect{list << 'Some Value'}.to raise_error ArgumentError
   end
 
-  it "Should save contacts" do
+  it 'Should save contacts' do
     amo = Amocrm::API.new CONFIG['subdomain']
-    amo.auth(CONFIG['login'],CONFIG['hash'])
+    amo.auth(CONFIG['login'], CONFIG['hash'])
 
     name = 'Fedor sergeevich'
     list = Amocrm::Contacts.new
