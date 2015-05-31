@@ -72,7 +72,9 @@ module Amocrm
                    when :put, :post  then connection.send(method.to_sym, path, data, headers)
                    when :delete, :get then connection.send(method.to_sym, path, headers)
                  end
-      @cookie = response.to_hash['set-cookie'] if @cookie.empty?
+
+      cookie = response.to_hash['set-cookie']
+      @cookie = cookie if @cookie.nil? || @cookie.empty?
 
       code = response.code.to_i
       msg  = response.message
@@ -94,10 +96,11 @@ module Amocrm
     end
 
     def default_headers
-      {
-        'Cookie'           => @cookie.join,
-        'Content-Type'     => 'application/json'
-      }
+      headers = {}
+      headers['Cookie']       = @cookie.join '; '
+      headers['Content-Type'] = 'application/json'
+
+      headers
     end
 
   end
