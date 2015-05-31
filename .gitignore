@@ -2,3 +2,5 @@
 log/*.log
 pkg/
 spec/config.yml
+.rspec
+.idea
