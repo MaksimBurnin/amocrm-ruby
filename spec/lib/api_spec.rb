@@ -1,32 +1,6 @@
 require 'spec_helper'
 
 describe Amocrm::API do
-  let(:auth_responce) do
-    {
-      response: { auth: true }
-    }
-  end
-
-  let(:unauth_responce) do
-    {
-      response: { auth: false }
-    }
-  end
-
-  before(:each) do
-
-    stub_request(:post, "https://#{subdomain}.amocrm.ru/private/api/auth.php?type=json")
-      .with(body: hash_including(USER_LOGIN: valid_login, USER_HASH: valid_hash))
-      .to_return(status: 200, body: auth_responce.to_json, headers: {"Set-Cookie"=>"session=foobar"})
-
-    stub_request(:post, "https://#{subdomain}.amocrm.ru/private/api/auth.php?type=json")
-      .with(body: hash_including(USER_LOGIN: valid_login+'!', USER_HASH: valid_hash+'!'))
-      .to_return(status: 200, body: unauth_responce.to_json)
-
-    stub_request(:post, "https://#{subdomain}.amocrm.ru/private/api/v2/json/non-existant-method")
-      .to_return(status: 400, body: "bad request")
-  end
-
   it 'should create an object' do
     api = Amocrm::API.new 'example'
 
