@@ -7,8 +7,8 @@ describe Amocrm::Contacts do
   end
 
   it 'Should save contacts' do
-    amo = Amocrm::API.new CONFIG['subdomain']
-    amo.auth(CONFIG['login'], CONFIG['hash'])
+    amo = Amocrm::API.new subdomain
+    amo.auth(valid_login, valid_hash)
 
     name = 'Fedor sergeevich'
     list = Amocrm::Contacts.new
